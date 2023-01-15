@@ -1,5 +1,5 @@
 {
-  "app": "npx ts-node --prefer-ts-exts bin/aws-lambda-get-all-todos.ts",
+  "app": "npx ts-node --prefer-ts-exts bin/TodoApiGateway.ts",
   "watch": {
     "include": [
       "**"
