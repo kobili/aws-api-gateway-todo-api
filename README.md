@@ -1,6 +1,10 @@
-# Welcome to your CDK TypeScript project
+# AWS API Gateway Todo API 
 
-This is a blank project for CDK development with TypeScript.
+This project uses AWS CDK v2 to implement and deploy a REST API using AWS API Gateway and Lambda.
+
+Intended as a proof of concept
+
+This is a bootstrapped project for CDK development with TypeScript.
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
