@@ -4,8 +4,10 @@ import { LambdaIntegration, LambdaRestApi } from "aws-cdk-lib/aws-apigateway";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import path = require("path");
+import { Duration } from 'aws-cdk-lib';
 
 const LAMBDA_FUNCTION_DIRECTORY = `${__dirname}/lambda/`;
+const LAMBDA_TIMEOUT_DURATION = Duration.seconds(30);
 
 export class TodoApiGatewayStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -15,13 +17,22 @@ export class TodoApiGatewayStack extends cdk.Stack {
     const defaultHandler = new NodejsFunction(this, "DefaultHandlerLambda", {
       runtime: Runtime.NODEJS_16_X,
       entry: path.join(LAMBDA_FUNCTION_DIRECTORY, `DefaultHandler.ts`),
-      handler: 'handler'
+      handler: 'handler',
+      timeout: LAMBDA_TIMEOUT_DURATION
     });
 
     const getAllTodosFunction = new NodejsFunction(this, "GetAllTodosLambda", {
         runtime: Runtime.NODEJS_16_X,
         entry: path.join(LAMBDA_FUNCTION_DIRECTORY, `GetAllTodos.ts`),
-        handler: 'handler'
+        handler: 'handler',
+        timeout: LAMBDA_TIMEOUT_DURATION
+    });
+
+    const addNewTodoFunction = new NodejsFunction(this, "AddTodoLambda", {
+      runtime: Runtime.NODEJS_16_X,
+      entry: path.join(LAMBDA_FUNCTION_DIRECTORY, "AddNewTodo.ts"),
+      handler: 'handler',
+      timeout: LAMBDA_TIMEOUT_DURATION
     });
 
     // define the API Gateway
@@ -31,6 +42,8 @@ export class TodoApiGatewayStack extends cdk.Stack {
     });
 
     const todos = getAllTodosApi.root.addResource("todo");
+    const addTodoIntegration = new LambdaIntegration(addNewTodoFunction);
+    todos.addMethod('POST', addTodoIntegration);  // POST /todo/
 
     const allTodos = todos.addResource('all');
     const getAllTodosIntegration = new LambdaIntegration(getAllTodosFunction);
